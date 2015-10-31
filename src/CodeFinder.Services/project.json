@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0-*",
+  "description": "CodeFinder.Services Class Library",
+  "authors": [ "mika" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "frameworks": {
+    "dnx451": { }
+  },
+  "dependencies": {
+    "CodeFinder.ViewModels": "1.0.0-*"
+  }
+}
