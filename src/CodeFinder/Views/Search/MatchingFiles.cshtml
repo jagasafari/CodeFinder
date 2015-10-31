@@ -15,7 +15,7 @@ else
         </h2>
         <button id="moreCode" data-bind="click: GetNextFile" class="pull-right">Get More Code</button>
         <div data-bind="foreach: codeFiles"><p >
-                <strong class="fileFullPath" data-bind="text: fullPath"></strong></p>
+            <strong class="fileFullPath" data-bind="text: filePath"></strong></p>
             <div data-bind="foreach: fileLines">
                 <pre class="codeStyle" data-bind="text: $data">
             </pre>
@@ -29,33 +29,35 @@ else
 {
     <script type="text/javascript">
 
-        $(function () {
+        $(function() {
             function fileCode(firstFileLines, path) {
                 var self = this;
                 self.fileLines = ko.observableArray(firstFileLines);
-                self.fullPath = ko.observable(path);
+                self.filePath = ko.observable(path);
             }
 
             function viewModel() {
                 var self = this;
                 self.names = ko.observableArray(@Json.Serialize(Model.MachingFiles));
-                self.codeFiles = ko.observableArray([new fileCode(@Json.Serialize(Model.FirstFileContent),
-                    @Json.Serialize(@Model.MachingFiles[Model.NextFile++]))]);
-                self.nextFile = 1;
-                self.GetNextFile = function () {
+                self.nextFile = 0;
+                self.codeFiles = ko.observableArray([
+                    new fileCode(@Json.Serialize(Model.FirstFileContent),
+                        self.names()[self.nextFile])
+                ]);
+                self.matchingKeywords = ko.observableArray(@Json.Serialize(Model.Keywords));
+                self.GetNextFile = function() {
                     if (@Json.Serialize(Model.NextFile) < self.names().length) {
-                        var p = "http://localhost:5000/Search/FileCode?path=".concat(this.names()[this.nextFile]);
-                        $.getJSON(p, function (fileLines) {
-                            self.codeFiles.push(new fileCode(fileLines,@Json.Serialize(Model.MachingFiles[Model.NextFile++])));
-                            });
-                        self.nextFile++;
+                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(this.names()[++self.nextFile]);
+                        $.getJSON(requestUrl, function(fileLines) {
+                            self.codeFiles.push(new fileCode(fileLines, self.names()[self.nextFile]));
+                        });
                     }
                 }
             }
 
             var vm = new viewModel();
             ko.applyBindings(vm);
-            $("body").on('keydown',function () { $('#moreCode').click(); });
+            $("body").on('keydown', function() { $('#moreCode').click(); });
         });
     </script>
 }

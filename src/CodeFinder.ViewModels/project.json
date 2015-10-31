@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "description": "CodeFinder.ViewModels Class Library",
   "authors": [ "mika" ],
@@ -7,6 +7,10 @@
   "licenseUrl": "",
 
   "frameworks": {
-    "dnx451": { }
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.ComponentModel.DataAnnotations": "4.0.0.0"
+      }
+    }
   }
 }

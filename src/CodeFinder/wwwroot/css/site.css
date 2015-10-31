@@ -10,6 +10,10 @@
     background-color: white;
     line-height: 0;
 }
+.styledCodeLine {
+    color: blueviolet;
+    background-color: yellow;
+}
 .fileFullPath {
     color: green;
     margin-bottom: 30px;

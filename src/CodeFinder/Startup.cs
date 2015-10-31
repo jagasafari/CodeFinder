@@ -28,6 +28,7 @@
             services.AddMvc();
 
             services.AddScoped<ICodeFounderFactory, CodeFounderFactory>();
+            services.AddScoped<IFileCodeProcessor, FileCodeProcessor>();
         }
 
         public void Configure(IApplicationBuilder app,

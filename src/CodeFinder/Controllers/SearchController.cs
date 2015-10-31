@@ -1,22 +1,25 @@
 ﻿namespace CodeFinder.Controllers
 {
-    using CodeFinder.Services.Contracts;
-    using CodeFinder.ViewModels;
     using Microsoft.AspNet.Mvc;
+    using Services.Contracts;
+    using ViewModels;
 
     public class SearchController : Controller
     {
         private readonly ICodeFounderFactory _codeFounderFactory;
+        private readonly IFileCodeProcessor _codeProcessor;
 
-        public SearchController(ICodeFounderFactory codeFounderFactory)
+        public SearchController(ICodeFounderFactory codeFounderFactory,
+            IFileCodeProcessor codeProcessor)
         {
             _codeFounderFactory = codeFounderFactory;
+            _codeProcessor = codeProcessor;
         }
 
         [HttpGet]
         public IActionResult FileCode(string path)
         {
-            return Json(System.IO.File.ReadAllLines(path));
+            return Json(_codeProcessor.Process(path));
         }
 
         [HttpPost]
@@ -24,14 +27,14 @@
         {
             var codeFounder = _codeFounderFactory.Create(model);
             var machingFiles = codeFounder.GetMachingFiles();
-
             var machingFilesViewModel = new MachingFilesViewModel
             {
-                NextFile = 0,
+                Keywords = model.Keywords.Split(','),
+                NextFile = 1,
                 MachingFiles = machingFiles,
                 FirstFileContent =
                     machingFiles.Length > 0
-                        ? System.IO.File.ReadAllLines(machingFiles[0])
+                        ? _codeProcessor.Process(machingFiles[0])
                         : null
             };
 

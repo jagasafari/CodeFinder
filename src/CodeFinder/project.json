@@ -24,7 +24,11 @@
   },
 
   "frameworks": {
-    "dnx451": { }    
+    "dnx451": {
+      "frameworkAssemblies": {
+        "System.Web": "4.0.0.0"
+      }
+    }    
   },
 
   "exclude": [
