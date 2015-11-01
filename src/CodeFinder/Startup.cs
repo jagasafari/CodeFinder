@@ -47,7 +47,7 @@
                 routes =>
                 {
                     routes.MapRoute("default",
-                        "{controller=Home}/{action=Index}/{id?}");
+                        "{controller=Search}/{action=MatchingFiles}/{id?}");
                 });
         }
     }

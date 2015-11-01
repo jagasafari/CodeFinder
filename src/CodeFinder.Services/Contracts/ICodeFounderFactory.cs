@@ -4,6 +4,6 @@ namespace CodeFinder.Services.Contracts
 
     public interface ICodeFounderFactory 
     {
-        ICodeFounder Create(SearchedCodeViewModel model);
+        ICodeFounder Create(CodeToFindViewModel model);
     }
 }

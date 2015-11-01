@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
 
-    public class SearchedCodeViewModel
+    public class CodeToFindViewModel
     {
         [Required]
         public string SearchedPath { get; set; }

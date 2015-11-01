@@ -1,6 +1,6 @@
 ﻿namespace CodeFinder.Controllers
 {
-    using System;
+    using System.Linq;
     using Microsoft.AspNet.Mvc;
     using Services.Contracts;
     using ViewModels;
@@ -18,35 +18,51 @@
         }
 
         [HttpGet]
-        public IActionResult FileCode(string path)
+        public IActionResult MatchingFiles()
         {
-            return Json(_codeProcessor.Process(path));
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult MatchingFiles(SearchedCodeViewModel model)
+        public IActionResult MatchingFiles(
+            [FromForm] CodeToFindViewModel codeToFind)
         {
-            if(!ModelState.IsValid)
+            if(! ModelState.IsValid)
+                return View(codeToFind);
+
+            return RedirectToAction("Code", codeToFind);
+        }
+
+        public IActionResult Code(CodeToFindViewModel codeToFind)
+        {
+            var codeFounder = _codeFounderFactory.Create(codeToFind);
+            var machingFiles = codeFounder.GetMachingFiles();
+
+            if(! machingFiles.Any())
             {
-                //back to-do
-                throw new NotImplementedException();
+                return View(new MachingFilesViewModel {NotFound = true});
             }
 
-            var codeFounder = _codeFounderFactory.Create(model);
-            var machingFiles = codeFounder.GetMachingFiles();
-            var machingFilesViewModel = new MachingFilesViewModel
+            var nextFile = 0;
+            var bestMatchShortestFileContent =
+                _codeProcessor.Process(machingFiles[nextFile++]);
+
+            var matchingFiles = new MachingFilesViewModel
             {
-                Keywords = model.Keywords.Split(','),
-                NextFile = 1,
-                MachingFiles = machingFiles,
-                FirstFileContent =
-                    machingFiles.Length > 0
-                        ? _codeProcessor.Process(machingFiles[0])
-                        : null
+                Keywords = codeToFind.Keywords.Split(','),
+                FirstFileContent = bestMatchShortestFileContent,
+                NextFile = nextFile,
+                MachingFiles = machingFiles
             };
-            //redirect to action to-do
-            return View(machingFilesViewModel);
+
+            return View(matchingFiles);
+        }
+
+        [HttpGet]
+        public IActionResult FileCode(string path)
+        {
+            return Json(_codeProcessor.Process(path));
         }
     }
 }

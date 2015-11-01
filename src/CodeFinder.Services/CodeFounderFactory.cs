@@ -5,7 +5,7 @@
 
     public class CodeFounderFactory:ICodeFounderFactory
     {
-        public ICodeFounder Create(SearchedCodeViewModel model)
+        public ICodeFounder Create(CodeToFindViewModel model)
         {
             var keywords = model.Keywords.Split(',');
             var numKeywords = keywords.Length;
