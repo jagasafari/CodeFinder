@@ -66,8 +66,9 @@
                 var count = -1 +
                             _keywords.Count(
                                 keyword =>
-                                    Regex.IsMatch(text, keyword,
-                                        RegexOptions.IgnoreCase));
+                                    text.ToLowerInvariant()
+                                        .Contains(
+                                            keyword.ToLowerInvariant()));
                 if(count > -1)
                 {
                     fileList[count].Add(file.FullName);

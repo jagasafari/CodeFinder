@@ -17,7 +17,7 @@ else
         <div data-bind="foreach: codeFiles"><p >
             <strong class="fileFullPath" data-bind="text: filePath"></strong></p>
             <div data-bind="foreach: fileLines">
-                <pre class="codeStyle" data-bind="text: $data">
+                <pre class="codeStyle" data-bind="text: $data, css:{styledCodeLine:$root.containsKeyword($data)}">
             </pre>
                 <br/>
             </div>
@@ -47,11 +47,20 @@ else
                 self.matchingKeywords = ko.observableArray(@Json.Serialize(Model.Keywords));
                 self.GetNextFile = function() {
                     if (@Json.Serialize(Model.NextFile) < self.names().length) {
-                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(this.names()[++self.nextFile]);
+                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(self.names()[++self.nextFile]);
                         $.getJSON(requestUrl, function(fileLines) {
                             self.codeFiles.push(new fileCode(fileLines, self.names()[self.nextFile]));
                         });
                     }
+                }
+                self.containsKeyword = function(line) {
+                    console.log(self.matchingKeywords());
+                    for (var i = 0; i < self.matchingKeywords().length; i++) {
+                        console.log(line);
+                        if (line.toLowerCase().includes(self.matchingKeywords()[i]))
+                            return true;
+                    }
+                    return false;
                 }
             }
 

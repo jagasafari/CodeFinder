@@ -7,11 +7,10 @@
     padding: 0;
     margin: 0 0 0;
     border: none;
-    background-color: white;
     line-height: 0;
 }
 .styledCodeLine {
-    color: blueviolet;
+    line-height: 1.5;
     background-color: yellow;
 }
 .fileFullPath {

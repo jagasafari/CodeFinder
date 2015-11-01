@@ -1,5 +1,6 @@
 ﻿namespace CodeFinder.Controllers
 {
+    using System;
     using Microsoft.AspNet.Mvc;
     using Services.Contracts;
     using ViewModels;
@@ -23,8 +24,15 @@
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult MatchingFiles(SearchedCodeViewModel model)
         {
+            if(!ModelState.IsValid)
+            {
+                //back to-do
+                throw new NotImplementedException();
+            }
+
             var codeFounder = _codeFounderFactory.Create(model);
             var machingFiles = codeFounder.GetMachingFiles();
             var machingFilesViewModel = new MachingFilesViewModel
@@ -37,7 +45,7 @@
                         ? _codeProcessor.Process(machingFiles[0])
                         : null
             };
-
+            //redirect to action to-do
             return View(machingFilesViewModel);
         }
     }
