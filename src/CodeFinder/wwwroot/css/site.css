@@ -16,6 +16,7 @@
 .fileFullPath {
     color: green;
     margin-bottom: 30px;
+    background-color: greenyellow;
 }
 .body-content {
     padding-left: 15px;

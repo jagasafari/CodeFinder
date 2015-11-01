@@ -3,7 +3,6 @@
     using System.Collections.Concurrent;
     using System.IO;
     using System.Linq;
-    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Contracts;
 
@@ -31,13 +30,15 @@
         }
 
         private string[] SortListOfFiles(int numMachingFiles,
-            ConcurrentBag<string>[] fileList)
+            ConcurrentDictionary<string, int>[] fileList)
         {
             var result = new string[numMachingFiles];
             var nextFile = 0;
             for(var i = _numKeywords - 1; i >= 0; i--)
             {
-                foreach(var file in fileList[i])
+                var sortedByLineNumbers =
+                    SortFilesByLineNumbers(fileList[i]);
+                foreach(var file in sortedByLineNumbers)
                 {
                     result[nextFile++] = file;
                 }
@@ -45,24 +46,38 @@
             return result;
         }
 
+        private string[] SortFilesByLineNumbers(
+            ConcurrentDictionary<string, int> files)
+        {
+            var sortedFiles = new string[files.Count];
+            var count = 0;
+            foreach(var file in files.OrderBy(x=>x.Value))
+                sortedFiles[count++] = file.Key;
+            return sortedFiles;
+        }
+
         private int CountMatchingfiles(
-            ConcurrentBag<string>[] fileList)
+            ConcurrentDictionary<string, int>[] fileList)
         {
             var numMachingFiles = 0;
             for(var i = 0; i < _numKeywords; i++)
             {
-                numMachingFiles += fileList[i].Count();
+                numMachingFiles += fileList[i].Count;
             }
             return numMachingFiles;
         }
 
-        private ConcurrentBag<string>[] FindMachingFiles()
-        {
+        private ConcurrentDictionary<string, int>[] FindMachingFiles(){
             var fileList = InitializeConcurrentBag(_numKeywords);
-            var files = GetFiles();
+
+            var files = new DirectoryInfo(_searchedPath).GetFiles(
+                    _fileExtensionPattern,
+                    SearchOption.AllDirectories);
+
             Parallel.ForEach(files, file =>
             {
                 var text = File.ReadAllText(file.FullName);
+
                 var count = -1 +
                             _keywords.Count(
                                 keyword =>
@@ -71,30 +86,22 @@
                                             keyword.ToLowerInvariant()));
                 if(count > -1)
                 {
-                    fileList[count].Add(file.FullName);
+                    var endOfLineChar = '\n';
+                    var numLines = text.Count(x => x == endOfLineChar);
+                    fileList[count][file.FullName] = numLines;
                 }
             });
             return fileList;
         }
 
-        private static ConcurrentBag<string>[] InitializeConcurrentBag(
-            int numKeywords)
+        private static ConcurrentDictionary<string, int>[]
+            InitializeConcurrentBag(int numKeywords)
         {
-            var fileList = new ConcurrentBag<string>[numKeywords];
-            for(var i = 0; i < numKeywords; i++)
-            {
-                fileList[i] = new ConcurrentBag<string>();
-            }
+            var fileList =
+                new ConcurrentDictionary<string, int>[numKeywords];
+            for (var i = 0; i < numKeywords; i++)
+                fileList[i] = new ConcurrentDictionary<string, int>();
             return fileList;
-        }
-
-
-        private FileInfo[] GetFiles()
-        {
-            return
-                new DirectoryInfo(_searchedPath).GetFiles(
-                    _fileExtensionPattern,
-                    SearchOption.AllDirectories);
         }
     }
 }

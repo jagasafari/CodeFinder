@@ -6,16 +6,20 @@
 }
 else
 {
-    <div id="parent">
-        <br />
-        <br />
-        <h2>
-            Total number of files: <span data-bind="text: codeFiles().length"></span>
-            out of <span data-bind="text: names().length"></span>
-        </h2>
-        <button id="moreCode" data-bind="click: GetNextFile" class="pull-right">Get More Code</button>
-        <div data-bind="foreach: codeFiles"><p >
-            <strong class="fileFullPath" data-bind="text: filePath"></strong></p>
+    <div>
+        <div class="row modal-header">
+            <strong>
+                Total number of files: <span data-bind="text: codeFiles().length"></span>
+                out of <span data-bind="text: names().length"></span>
+            </strong>
+            <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right">Get More Code</button>
+        </div>
+
+        <div data-bind="foreach: codeFiles" class="modal-body">
+            <div class="text-info" >
+                <strong class="fileFullPath" data-bind="text: filePath"></strong>
+                <br/>
+            </div>
             <div data-bind="foreach: fileLines">
                 <pre class="codeStyle" data-bind="text: $data, css:{styledCodeLine:$root.containsKeyword($data)}">
             </pre>
@@ -57,7 +61,7 @@ else
                     console.log(self.matchingKeywords());
                     for (var i = 0; i < self.matchingKeywords().length; i++) {
                         console.log(line);
-                        if (line.toLowerCase().includes(self.matchingKeywords()[i]))
+                        if (line.toLowerCase().includes(self.matchingKeywords()[i].toLowerCase()))
                             return true;
                     }
                     return false;
