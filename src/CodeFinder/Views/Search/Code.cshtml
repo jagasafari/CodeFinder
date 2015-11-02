@@ -3,7 +3,7 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 @model CodeFinder.ViewModels.MachingFilesViewModel
-@if(Model.NotFound)
+@if (Model.NotFound)
 {
     <div class="text-warning">No match found!</div>
 }
@@ -11,24 +11,29 @@ else
 {
     <div>
         <div class="row modal-header">
-            <strong>
+            <strong class="col-md-5">
                 Total number of files: <span data-bind="text: codeFiles().length"></span>
                 out of <span data-bind="text: names().length"></span>
             </strong>
-            <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right">Get More Code</button>
+            <div class="col-md-5">
+                <ul class="list-inline" data-bind="foreach: matchingKeywords">
+                    <li data-bind="text: $data"></li>
+                </ul>
+            </div>
+            <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
         </div>
 
         <div data-bind="foreach: codeFiles" class="modal-body">
             <div class="text-info">
                 <strong class="fileFullPath" data-bind="text: filePath"></strong>
-                <br/>
+                <br />
             </div>
             <div data-bind="foreach: fileLines">
                 <pre class="codeStyle" data-bind="text: $data, css:{styledCodeLine:$root.containsKeyword($data)}">
             </pre>
-                <br/>
+                <br />
             </div>
-            <hr/>
+            <hr />
         </div>
     </div>
 }

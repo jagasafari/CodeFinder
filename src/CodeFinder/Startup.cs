@@ -37,6 +37,8 @@
             loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
+            //To-Do Uncomment when Microsoft.Framework.Logging.NLog is available
+            //loggerFactory.AddNLog(new global::NLog.LogFactory());
 
             app.UseBrowserLink();
             app.UseDeveloperExceptionPage();

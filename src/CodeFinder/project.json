@@ -14,6 +14,8 @@
     "Microsoft.Framework.Logging": "1.0.0-beta8",
     "Microsoft.Framework.Logging.Console": "1.0.0-beta8",
     "Microsoft.Framework.Logging.Debug": "1.0.0-beta8",
+    "Microsoft.Framework.Logging.EventLog": "1.0.0-beta8",
+    "NLog": "4.2.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0-beta8",
     "CodeFinder.Services": "1.0.0-*",
     "CodeFinder.ViewModels": "1.0.0-*"

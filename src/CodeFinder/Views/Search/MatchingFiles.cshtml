@@ -1,8 +1,11 @@
 ﻿@using System.Threading.Tasks
 @using CodeFinder.ViewModels
+@using Microsoft.AspNet.Mvc.ModelBinding
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Serialization
 @model CodeFinder.ViewModels.CodeToFindViewModel
 <form asp-controller="Search" asp-action="MatchingFiles" method="post" class="form-horizontal"
-      role="form" asp-antiforgery="true">
+      id="matchingFilesForm" role="form" asp-antiforgery="true">
     <hr/>
     <div asp-validation-summary="ValidationSummary.ModelOnly" class="text-danger"></div>
     <div class="form-group">
@@ -37,6 +40,16 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script type="text/javascript">
-        $(document).ready(disableSubmit);
+        $(document).ready(
+            function disableSubmit() {
+                $("button:submit").click(function() {
+                    var disableSubmitButton = $("#matchingFilesForm").valid();
+                    if(disableSubmitButton) $(this).text("Please Wait");
+                });
+                $("form").on("submit", function() {
+                    var disableSubmitButton = $("#matchingFilesForm").valid();
+                    if(disableSubmitButton) $(this).find("button:submit").prop("disabled", true);
+                });
+            });
     </script>
 }
