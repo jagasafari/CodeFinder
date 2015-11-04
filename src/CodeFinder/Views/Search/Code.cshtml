@@ -12,12 +12,14 @@ else
     <div>
         <div class="row modal-header">
             <strong class="col-md-5">
-                Total number of files: <span data-bind="text: codeFiles().length"></span>
-                out of <span data-bind="text: names().length"></span>
+                Total number of files: <span data-bind="text: codeFiles().length"></span> out of @Model.MachingFiles.Length
             </strong>
             <div class="col-md-5">
-                <ul class="list-inline" data-bind="foreach: matchingKeywords">
-                    <li data-bind="text: $data"></li>
+                <ul class="list-inline">
+                    @foreach(var keyword in Model.Keywords)
+                    {
+                        <li>@keyword</li>
+                    }
                 </ul>
             </div>
             <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
@@ -44,40 +46,37 @@ else
         $(function() {
             function fileCode(firstFileLines, path) {
                 var self = this;
-                self.fileLines = ko.observableArray(firstFileLines);
-                self.filePath = ko.observable(path);
+                self.fileLines = firstFileLines;
+                self.filePath = path;
             }
 
             function viewModel() {
                 var self = this;
-                self.names = ko.observableArray(@Json.Serialize(Model.MachingFiles));
+                self.names = @Json.Serialize(Model.MachingFiles);
                 self.nextFile = 0;
                 self.codeFiles = ko.observableArray([
                     new fileCode(@Json.Serialize(Model.FirstFileContent),
-                        self.names()[self.nextFile])
+                        self.names[self.nextFile])
                 ]);
-                self.matchingKeywords = ko.observableArray(@Json.Serialize(Model.Keywords));
+                self.matchingKeywords = @Json.Serialize(Model.Keywords);
                 self.GetNextFile = function() {
-                    if (@Json.Serialize(Model.NextFile) < self.names().length) {
-                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(self.names()[++self.nextFile]);
+                    if (@Json.Serialize(Model.NextFile) < self.names.length) {
+                        var nextFilePath = self.names[++self.nextFile];
+                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(nextFilePath);
                         $.getJSON(requestUrl, function(fileLines) {
-                            self.codeFiles.push(new fileCode(fileLines, self.names()[self.nextFile]));
+                            self.codeFiles.push(new fileCode(fileLines, nextFilePath));
                         });
                     }
                 }
                 self.containsKeyword = function(line) {
-                    console.log(self.matchingKeywords());
-                    for (var i = 0; i < self.matchingKeywords().length; i++) {
-                        console.log(line);
-                        if (line.toLowerCase().includes(self.matchingKeywords()[i].toLowerCase()))
+                    for (var i = 0; i < self.matchingKeywords.length; i++) 
+                        if (line.toLowerCase().includes(self.matchingKeywords[i].toLowerCase()))
                             return true;
-                    }
                     return false;
                 }
             }
 
-            var vm = new viewModel();
-            ko.applyBindings(vm);
+            ko.applyBindings(new viewModel());
             $("body").on('keydown', function() { $('#moreCode').click(); });
         });
     </script>
