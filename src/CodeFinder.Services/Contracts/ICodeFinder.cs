@@ -1,6 +1,6 @@
 namespace CodeFinder.Services.Contracts
 {
-    public interface ICodeFounder
+    public interface ICodeFinder
     {
         string[] GetMachingFiles();
     }

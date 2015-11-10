@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using Contracts;
 
-    public class CodeFounder : ICodeFounder
+    public class CodeFinder : ICodeFinder
     {
         private readonly string _fileExtensionPattern;
         private readonly string[] _keywords;
@@ -14,10 +14,9 @@
         private readonly string _searchedPath;
         private readonly ConcurrentDictionary<string, int>[] _groupedFiles;
 
-        public CodeFounder(int numKeywords, string[] keywords,
-            string searchedPath, string fileExtensionPattern)
+        public CodeFinder(string[] keywords, string searchedPath, string fileExtensionPattern)
         {
-            _numKeywords = numKeywords;
+            _numKeywords = keywords.Length;
             _keywords = keywords;
             _searchedPath = searchedPath;
             _fileExtensionPattern = fileExtensionPattern;

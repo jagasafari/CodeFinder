@@ -58,16 +58,16 @@ else
                     new fileCode(@Json.Serialize(Model.FirstFileContent),
                         self.names[self.nextFile])
                 ]);
-                self.matchingKeywords = @Json.Serialize(Model.Keywords);
                 self.GetNextFile = function() {
                     if (@Json.Serialize(Model.NextFile) < self.names.length) {
                         var nextFilePath = self.names[++self.nextFile];
-                        var requestUrl = "http://localhost:5000/Search/FileCode?path=".concat(nextFilePath);
+                        var requestUrl = "http://localhost:5001/Search/FileCode?path=".concat(nextFilePath);
                         $.getJSON(requestUrl, function(fileLines) {
                             self.codeFiles.push(new fileCode(fileLines, nextFilePath));
                         });
                     }
                 }
+                self.matchingKeywords = @Json.Serialize(Model.Keywords);
                 self.containsKeyword = function(line) {
                     for (var i = 0; i < self.matchingKeywords.length; i++) 
                         if (line.toLowerCase().includes(self.matchingKeywords[i].toLowerCase()))

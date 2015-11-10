@@ -3,15 +3,14 @@
     using Contracts;
     using ViewModels;
 
-    public class CodeFounderFactory:ICodeFounderFactory
+    public class CodeFinderFactory:ICodeFinderFactory
     {
-        public ICodeFounder Create(CodeToFindViewModel model)
+        public ICodeFinder Create(CodeToFindViewModel model)
         {
             var keywords = model.Keywords.Split(',');
-            var numKeywords = keywords.Length;
             var searchedPath = model.SearchedPath;
             var fileExtensionPattern = model.FileExtensionPattern;
-            return new CodeFounder(numKeywords, keywords,searchedPath,fileExtensionPattern);
+            return new CodeFinder( keywords, searchedPath, fileExtensionPattern);
         }
     }
 }

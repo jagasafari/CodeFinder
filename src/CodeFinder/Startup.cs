@@ -11,14 +11,13 @@
 
     public class Startup
     {
-        public Startup(IHostingEnvironment env,
-            IApplicationEnvironment appEnv)
+        public Startup(IApplicationEnvironment appEnv)
         {
-            var builder = new ConfigurationBuilder()
+            Configuration = new ConfigurationBuilder()
                 .SetBasePath(appEnv.ApplicationBasePath)
                 .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+                .AddEnvironmentVariables()
+                .Build();
         }
 
         public IConfigurationRoot Configuration { get; set; }
@@ -27,7 +26,7 @@
         {
             services.AddMvc();
 
-            services.AddScoped<ICodeFounderFactory, CodeFounderFactory>();
+            services.AddScoped<ICodeFinderFactory, CodeFinderFactory>();
             services.AddScoped<IFileCodeProcessor, FileCodeProcessor>();
         }
 
@@ -37,8 +36,6 @@
             loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
-            //To-Do Uncomment when Microsoft.Framework.Logging.NLog is available
-            //loggerFactory.AddNLog(new global::NLog.LogFactory());
 
             app.UseBrowserLink();
             app.UseDeveloperExceptionPage();

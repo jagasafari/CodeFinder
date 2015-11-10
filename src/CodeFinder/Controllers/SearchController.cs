@@ -7,13 +7,13 @@
 
     public class SearchController : Controller
     {
-        private readonly ICodeFounderFactory _codeFounderFactory;
+        private readonly ICodeFinderFactory _codeFinderFactory;
         private readonly IFileCodeProcessor _codeProcessor;
 
-        public SearchController(ICodeFounderFactory codeFounderFactory,
+        public SearchController(ICodeFinderFactory codeFinderFactory,
             IFileCodeProcessor codeProcessor)
         {
-            _codeFounderFactory = codeFounderFactory;
+            _codeFinderFactory = codeFinderFactory;
             _codeProcessor = codeProcessor;
         }
 
@@ -36,7 +36,7 @@
 
         public IActionResult Code(CodeToFindViewModel codeToFind)
         {
-            var codeFounder = _codeFounderFactory.Create(codeToFind);
+            var codeFounder = _codeFinderFactory.Create(codeToFind);
             var machingFiles = codeFounder.GetMachingFiles();
 
             if(! machingFiles.Any())
@@ -53,7 +53,7 @@
                 Keywords = codeToFind.Keywords.Split(','),
                 FirstFileContent = bestMatchShortestFileContent,
                 NextFile = nextFile,
-                MachingFiles = machingFiles
+                MachingFiles = machingFiles,
             };
 
             return View(matchingFiles);
