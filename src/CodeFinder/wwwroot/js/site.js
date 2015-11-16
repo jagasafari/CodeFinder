@@ -1,8 +1,10 @@
 ﻿function disableSubmit() {
-    $("button:submit").click(function () {
-        $(this).text("Please Wait");
+    $("button:submit").click(function() {
+        var disableSubmitButton = $("#matchingFilesForm").valid();
+        if (disableSubmitButton) $(this).text("Please Wait");
     });
-    $("form").on("submit", function () {
-        $(this).find("button:submit").prop("disabled", true);
+    $("form").on("submit", function() {
+        var disableSubmitButton = $("#matchingFilesForm").valid();
+        if (disableSubmitButton) $(this).find("button:submit").prop("disabled", true);
     });
 }

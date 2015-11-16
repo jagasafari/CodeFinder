@@ -2,7 +2,9 @@
 @using CodeFinder.ViewModels
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
-@model CodeFinder.ViewModels.MachingFilesViewModel
+@model MachingFilesViewModel
+@Html.Partial("_SearchForm", Model.CodeToFind)
+<br/><br/><br/><br/>
 @if (Model.NotFound)
 {
     <div class="text-warning">No match found!</div>
@@ -10,20 +12,12 @@
 else
 {
     <div>
-        <div class="row modal-header">
-            <strong class="col-md-5">
-                Total number of files: <span data-bind="text: codeFiles().length"></span> out of @Model.MachingFiles.Length
-            </strong>
-            <div class="col-md-5">
-                <ul class="list-inline">
-                    @foreach(var keyword in Model.Keywords)
-                    {
-                        <li>@keyword</li>
-                    }
-                </ul>
-            </div>
-            <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
-        </div>
+        <strong>
+            Total number of files: <span data-bind="text: codeFiles().length"></span> out of @Model.NumberOfMatchingFiles
+        </strong>
+    </div>
+    <div>
+        <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
 
         <div data-bind="foreach: codeFiles" class="modal-body">
             <div class="text-info">
@@ -38,46 +32,53 @@ else
             <hr />
         </div>
     </div>
-}
-@section scripts
+
+    @section scripts
 {
-    <script type="text/javascript">
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+        <script type="text/javascript">
+            $(document).ready(disableSubmit);
+        </script>
 
-        $(function() {
-            function fileCode(firstFileLines, path) {
-                var self = this;
-                self.fileLines = firstFileLines;
-                self.filePath = path;
-            }
+        <script type="text/javascript">
+            $(function() {
+                function fileCode(firstFileLines, path) {
+                    var self = this;
+                    self.fileLines = firstFileLines;
+                    self.filePath = path;
+                }
 
-            function viewModel() {
-                var self = this;
-                self.names = @Json.Serialize(Model.MachingFiles);
-                self.nextFile = 0;
-                self.codeFiles = ko.observableArray([
-                    new fileCode(@Json.Serialize(Model.FirstFileContent),
-                        self.names[self.nextFile])
-                ]);
-                self.GetNextFile = function() {
-                    if (@Json.Serialize(Model.NextFile) < self.names.length) {
-                        var nextFilePath = self.names[++self.nextFile];
-                        var requestUrl = "http://localhost:5001/Search/FileCode?path=".concat(nextFilePath);
-                        $.getJSON(requestUrl, function(fileLines) {
-                            self.codeFiles.push(new fileCode(fileLines, nextFilePath));
-                        });
+                function viewModel() {
+                    var self = this;
+                    self.names = @Json.Serialize(Model.MachingFiles);
+                    self.nextFile = 0;
+                    self.codeFiles = ko.observableArray([
+                        new fileCode(@Json.Serialize(Model.FirstFileContent),
+                            self.names[self.nextFile])
+                    ]);
+                    self.GetNextFile = function() {
+                        if (@Json.Serialize(Model.NextFile) < self.names.length) {
+                            var nextFilePath = self.names[++self.nextFile];
+                            var requestUrl = "http://localhost:5001/Search/FileCode?path=".concat(nextFilePath);
+                            $.getJSON(requestUrl, function(fileLines) {
+                                self.codeFiles.push(new fileCode(fileLines, nextFilePath));
+                            });
+                        }
+                    }
+                    var keywordsString = @Json.Serialize(Model.CodeToFind.Keywords);
+                    self.matchingKeywords = keywordsString.split(",");
+                    self.containsKeyword = function(line) {
+                        for (var i = 0; i < self.matchingKeywords.length; i++)
+                            if (line.toLowerCase().includes(self.matchingKeywords[i].toLowerCase()))
+                                return true;
+                        return false;
                     }
                 }
-                self.matchingKeywords = @Json.Serialize(Model.Keywords);
-                self.containsKeyword = function(line) {
-                    for (var i = 0; i < self.matchingKeywords.length; i++) 
-                        if (line.toLowerCase().includes(self.matchingKeywords[i].toLowerCase()))
-                            return true;
-                    return false;
-                }
-            }
 
-            ko.applyBindings(new viewModel());
-            $("body").on('keydown', function() { $('#moreCode').click(); });
-        });
-    </script>
-}
+                ko.applyBindings(new viewModel());
+                $("body").on('keydown', function() { $('#moreCode').click(); });
+            });
+        </script>
+    }
+            }

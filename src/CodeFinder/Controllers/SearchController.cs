@@ -41,7 +41,11 @@
 
             if(! machingFiles.Any())
             {
-                return View(new MachingFilesViewModel {NotFound = true});
+                return View(new MachingFilesViewModel
+                {
+                    NumberOfMatchingFiles = 0,
+                    NotFound = true
+                });
             }
 
             var nextFile = 0;
@@ -50,9 +54,10 @@
 
             var matchingFiles = new MachingFilesViewModel
             {
-                Keywords = codeToFind.Keywords.Split(','),
+                CodeToFind = codeToFind,
                 FirstFileContent = bestMatchShortestFileContent,
                 NextFile = nextFile,
+                NumberOfMatchingFiles =machingFiles.Length,
                 MachingFiles = machingFiles,
             };
 
