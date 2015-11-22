@@ -3,40 +3,43 @@
 @using Newtonsoft.Json
 @using Newtonsoft.Json.Serialization
 @model MachingFilesViewModel
-@Html.Partial("_SearchForm", Model.CodeToFind)
-<br/><br/><br/><br/>
+<div id="searchForm" class="navbar navbar-inverse navbar-fixed-top centered">
+    @{ await Html.RenderPartialAsync("_SearchForm", Model.CodeToFind); }
+</div>
+<br />
 @if (Model.NotFound)
 {
     <div class="text-warning">No match found!</div>
 }
 else
 {
-    <div>
-        <strong>
-            Total number of files: <span data-bind="text: codeFiles().length"></span> out of @Model.NumberOfMatchingFiles
-        </strong>
-    </div>
-    <div>
-        <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
+    <div class="container body-content">
+        <div>
+            <strong>
+                Total number of files: <span data-bind="text: codeFiles().length"></span> out of @Model.NumberOfMatchingFiles
+            </strong>
+        </div>
+        <div>
+            <button id="moreCode" data-bind="click: GetNextFile" class="btn btn-default pull-right col-md-2">Get More Code</button>
 
-        <div data-bind="foreach: codeFiles" class="modal-body">
-            <div class="text-info">
-                <strong class="fileFullPath" data-bind="text: filePath"></strong>
-                <br />
-            </div>
-            <div data-bind="foreach: fileLines">
-                <pre class="codeStyle" data-bind="text: $data, css:{styledCodeLine:$root.containsKeyword($data)}">
+            <div data-bind="foreach: codeFiles" class="modal-body">
+                <div class="text-info">
+                    <strong class="fileFullPath" data-bind="text: filePath"></strong>
+                    <br />
+                </div>
+                <div data-bind="foreach: fileLines">
+                    <pre class="codeStyle" data-bind="text: $data, css:{styledCodeLine:$root.containsKeyword($data)}">
             </pre>
-                <br />
+                    <br />
+                </div>
+                <hr />
             </div>
-            <hr />
         </div>
     </div>
-
     @section scripts
 {
         <script src="~/js/site.js" asp-append-version="true"></script>
-        @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+        @{ await Html.RenderPartialAsync("_ValidationScripts"); }
         <script type="text/javascript">
             $(document).ready(disableSubmit);
         </script>

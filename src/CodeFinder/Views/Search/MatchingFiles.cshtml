@@ -2,10 +2,10 @@
 @using CodeFinder.ViewModels
 @model CodeToFindViewModel
 <hr/>
-@Html.Partial("_SearchForm",Model)
+@{ await Html.RenderPartialAsync("_SearchForm", Model); }
 @section Scripts {
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{await Html.RenderPartialAsync("_ValidationScripts"); }
     <script type="text/javascript">
         $(document).ready(disableSubmit);
     </script>

@@ -43,6 +43,7 @@
             {
                 return View(new MachingFilesViewModel
                 {
+                    CodeToFind=codeToFind,
                     NumberOfMatchingFiles = 0,
                     NotFound = true
                 });
